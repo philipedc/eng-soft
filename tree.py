@@ -126,35 +126,23 @@ class Trie(Tree):
   def __init__(self):
 
     super().__init__()
-    self.idx = 0
     self.reverse_tree = Tree()
 
 
-  def add(self, key):
+  def add(self, key, idx):
     new_node = Node(key)
-    new_node.value = str(self.idx)
+    new_node.value = str(idx)
     self.insert(new_node)
 
-    new_node_reversed = Node(str(self.idx))
+    new_node_reversed = Node(str(idx))
     new_node_reversed.value = key
     self.reverse_tree.insert(new_node_reversed)
-    self.idx += 1
 
 
 tree = Trie()
-tree.add("0")
-tree.add("01")
-tree.remove("0")
-tree.add("100")
-tree.add("101")
-tree.add("110")
-tree.add("111")
-tree.add("1110")
-tree.add("1111")
-tree.add("11110")
-tree.add("11111")
-tree.add("111111")
-tree.print(tree.root)
+# tree.add("0")
+tree.add("0001", 10)
+tree.add("1111", 20)
+# tree.print(tree.root)
 reverse_tree = tree.reverse_tree
-print(reverse_tree[2])
-reverse_tree.print(reverse_tree.root)
+print(reverse_tree[10])
