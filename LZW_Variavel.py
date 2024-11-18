@@ -1,8 +1,11 @@
-def lzw_compressor(texto_original, tam_max_codigo=12):
+import tree
 
+def lzw_compressor(texto_original, tam_max_codigo=12):
     tam_max_dic = 2**tam_max_codigo
     tam_dic = 256
-    dicionario = {chr(i): i for i in range(256)} # Inicializa o dicionario com os 256 primeiros caracteres ASCII
+    dicionario = tree.Trie()
+    for i in range(tam_dic):
+        dicionario.add(chr(i), i)
     palavra_atual = ""
     texto_comprimido = []
     mudancas_tamanho = [] # Lista que armazena os indices onde o tamanho do código muda
@@ -11,19 +14,22 @@ def lzw_compressor(texto_original, tam_max_codigo=12):
     for c in texto_original:
         prox_palavra = palavra_atual + c
         # Se a palavra atual + o próximo caractere estiver no dicionário, a palavra atual é atualizada
-        if prox_palavra in dicionario:
+        if dicionario[prox_palavra] is not None:
             palavra_atual = prox_palavra
         # Se a palavra atual + o próximo caractere não estiver no dicionário, a palavra atual é adicionada ao dicionário
         else:
-            texto_comprimido.append(dicionario[palavra_atual])
+            texto_comprimido.append(int(dicionario[palavra_atual]))
             # Se o dicionário ainda não está cheio, a palavra atual + o próximo caractere é adicionada ao dicionário
             if tam_dic < tam_max_dic:
-                dicionario[prox_palavra] = tam_dic
+                dicionario.add(prox_palavra, tam_dic)
                 tam_dic += 1
             # Se o dicionário está cheio, o dicionário é reinicializado com os 256 primeiros caracteres ASCII
             else:
-                dicionario = {chr(i): i for i in range(256)}
+                dicionario = tree.Trie()
                 tam_dic = 256
+                for i in range(tam_dic):
+                    dicionario.add(chr(i), i)
+
             # Se o tamanho do dicionário é igual a 2^tamanho do código, o tamanho do código é incrementado
             if tam_dic == 2 ** (tam_codigo):
                 tam_codigo += 1
@@ -31,7 +37,7 @@ def lzw_compressor(texto_original, tam_max_codigo=12):
             palavra_atual = c
 
     if palavra_atual:
-        texto_comprimido.append(dicionario[palavra_atual])
+        texto_comprimido.append(int(dicionario[palavra_atual]))
 
     return texto_comprimido, mudancas_tamanho
 
@@ -39,7 +45,9 @@ def lzw_descompressor(texto_comprimido, tam_codigo=12):
     
     tam_max_dic = 2**tam_codigo
     tam_dic = 256
-    dicionario = {i: chr(i) for i in range(tam_dic)} # Inicializa o dicionario com os 256 primeiros caracteres ASCII
+    dicionario = tree.Trie()
+    for i in range(tam_dic):
+        dicionario.add(str(i), chr(i))
     tam_codigo = 9
     texto_comprimido = iter(texto_comprimido) # Transforma a lista de códigos em um iterador
     palavra_atual = chr(next(texto_comprimido)) # Pega o primeiro código e transforma em caractere
@@ -60,11 +68,13 @@ def lzw_descompressor(texto_comprimido, tam_codigo=12):
         
         # Se o dicionário ainda não está cheio, a palavra atual + o primeiro caractere da palavra atual é adicionada ao dicionário
         if tam_dic < tam_max_dic:
-            dicionario[tam_dic] = palavra_atual + codigo[0]
+            dicionario.add(str(tam_dic), palavra_atual + codigo[0])
             tam_dic += 1
         # Se o dicionário está cheio, o dicionário é reinicializado com os 256 primeiros caracteres
         else:
-            dicionario = {i: chr(i) for i in range(256)}
+            dicionario = tree.Trie()
+            for i in range(256):
+                dicionario.add(str(i), chr(i))
             tam_dic = 256
         
         # Se o tamanho do dicionário é igual a 2^tamanho do código, o tamanho do código é incrementado
