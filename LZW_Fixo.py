@@ -1,33 +1,42 @@
+import tree
+
 def lzw_compressor( texto_original, tam_codigo=12):
     tam_max_dic = 2**tam_codigo
     tam_dic = 256
-    dicionario = {chr(i): i for i in range(tam_dic)} # Inicializa o dicionario com os 256 primeiros caracteres ASCII
+    dicionario = tree.Trie()
+    for i in range(tam_dic):
+        dicionario.add(chr(i), i)
     palavra_atual = ""
     texto_comprimido = []
 
     for c in texto_original:
         prox_palavra = palavra_atual + c
-        if prox_palavra in dicionario:
+        if dicionario[prox_palavra] is not None:
            palavra_atual = prox_palavra
         else:
-            texto_comprimido.append(dicionario[palavra_atual])
+            texto_comprimido.append(int(dicionario[palavra_atual]))
 
             if tam_dic < tam_max_dic:
-                dicionario[prox_palavra] = tam_dic
+                dicionario.add(prox_palavra, tam_dic)
                 tam_dic += 1
             else:
-                dicionario = {chr(i): i for i in range(256)}
+                dicionario = tree.Trie()
                 tam_dic = 256
+                for i in range(tam_dic):
+                    dicionario.add(chr(i), i)
+                
             palavra_atual = c
 
     if palavra_atual:
-        texto_comprimido.append(dicionario[palavra_atual])
+        texto_comprimido.append(int(dicionario[palavra_atual]))
 
     return texto_comprimido
 
 def lzw_descompressor(texto_comprimido, tam_codigo=12):
     tam_dic = 256
-    dicionario = {i: chr(i) for i in range(tam_dic)} # Inicializa o dicionario com os 256 primeiros caracteres ASCII
+    dicionario = tree.Trie()
+    for i in range(tam_dic):
+        dicionario.add(str(i), chr(i))
     tam_max_dic = 2**tam_codigo
     
     # Transforma a lista de códigos em um iterador
@@ -36,19 +45,21 @@ def lzw_descompressor(texto_comprimido, tam_codigo=12):
     texto_descomprimido = [palavra_atual]
 
     for k in texto_comprimido:
-        if k in dicionario:
-            codigo = dicionario[k]
+        if dicionario[str(k)] is not None:
+            codigo = dicionario[str(k)]
         else:
             codigo = palavra_atual + palavra_atual[0]
         texto_descomprimido.append(codigo)
 
         # Se o dicionário ainda não está cheio, a palavra atual + o primeiro caractere da palavra atual é adicionada ao dicionário
         if tam_dic < tam_max_dic:
-            dicionario[tam_dic] =palavra_atual + codigo[0]
+            dicionario.add(str(tam_dic), palavra_atual + codigo[0])
             tam_dic += 1
         # Se o dicionário está cheio, o dicionário é reinicializado com os 256 primeiros caracteres da tabela ASCII
         else:
-            dicionario = {i: chr(i) for i in range(256)}
+            dicionario = tree.Trie()
+            for i in range(256):
+                dicionario.add(str(i), chr(i))
             tam_dic = 256
 
         palavra_atual = codigo
