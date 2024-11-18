@@ -63,7 +63,7 @@ class Tree:
         new_node.value = node.value
         intermediary_node.children.append(new_node)
 
-        print(f"{child.key} with {node.key} broke into {old_node.key} <- {common_prefix} -> {new_node.key} ")
+        # print(f"{child.key} with {node.key} broke into {old_node.key} <- {common_prefix} -> {new_node.key} ")
         return new_node
       
     father.children.append(node)
@@ -139,10 +139,3 @@ class Trie(Tree):
     self.reverse_tree.insert(new_node_reversed)
 
 
-tree = Trie()
-# tree.add("0")
-tree.add("0001", 10)
-tree.add("1111", 20)
-# tree.print(tree.root)
-reverse_tree = tree.reverse_tree
-print(reverse_tree[10])
