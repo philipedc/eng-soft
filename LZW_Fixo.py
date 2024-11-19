@@ -1,34 +1,34 @@
 import tree
 
-def lzw_compressor( texto_original, tam_codigo=12):
+def lzw_compressor(texto_original, tam_codigo=12):
     tam_max_dic = 2**tam_codigo
     tam_dic = 256
     dicionario = tree.Trie()
     for i in range(tam_dic):
-        dicionario.add(chr(i), i)
-    palavra_atual = ""
+        dicionario.add(chr(i), str(i))
+    palavra_atual = b""
     texto_comprimido = []
 
     for c in texto_original:
-        prox_palavra = palavra_atual + c
-        if dicionario[prox_palavra] is not None:
-           palavra_atual = prox_palavra
+        prox_palavra = palavra_atual + bytes([c])
+        if dicionario[prox_palavra.decode('latin1')] is not None:
+            palavra_atual = prox_palavra
         else:
-            texto_comprimido.append(int(dicionario[palavra_atual]))
+            texto_comprimido.append(int(dicionario[palavra_atual.decode('latin1')]))
 
             if tam_dic < tam_max_dic:
-                dicionario.add(prox_palavra, tam_dic)
+                dicionario.add(prox_palavra.decode('latin1'), str(tam_dic))
                 tam_dic += 1
             else:
                 dicionario = tree.Trie()
                 tam_dic = 256
                 for i in range(tam_dic):
-                    dicionario.add(chr(i), i)
+                    dicionario.add(chr(i), str(i))
                 
-            palavra_atual = c
+            palavra_atual = bytes([c])
 
     if palavra_atual:
-        texto_comprimido.append(int(dicionario[palavra_atual]))
+        texto_comprimido.append(int(dicionario[palavra_atual.decode('latin1')]))
 
     return texto_comprimido
 
@@ -39,23 +39,20 @@ def lzw_descompressor(texto_comprimido, tam_codigo=12):
         dicionario.add(str(i), chr(i))
     tam_max_dic = 2**tam_codigo
     
-    # Transforma a lista de códigos em um iterador
     texto_comprimido = iter(texto_comprimido)
-    palavra_atual = chr(next(texto_comprimido))
+    palavra_atual = chr(next(texto_comprimido)).encode('latin1')
     texto_descomprimido = [palavra_atual]
 
     for k in texto_comprimido:
         if dicionario[str(k)] is not None:
-            codigo = dicionario[str(k)]
+            codigo = dicionario[str(k)].encode('latin1')
         else:
-            codigo = palavra_atual + palavra_atual[0]
+            codigo = palavra_atual + bytes([palavra_atual[0]])
         texto_descomprimido.append(codigo)
 
-        # Se o dicionário ainda não está cheio, a palavra atual + o primeiro caractere da palavra atual é adicionada ao dicionário
         if tam_dic < tam_max_dic:
-            dicionario.add(str(tam_dic), palavra_atual + codigo[0])
+            dicionario.add(str(tam_dic), (palavra_atual + bytes([codigo[0]])).decode('latin1'))
             tam_dic += 1
-        # Se o dicionário está cheio, o dicionário é reinicializado com os 256 primeiros caracteres da tabela ASCII
         else:
             dicionario = tree.Trie()
             for i in range(256):
@@ -64,7 +61,7 @@ def lzw_descompressor(texto_comprimido, tam_codigo=12):
 
         palavra_atual = codigo
     
-    return ''.join(texto_descomprimido)
+    return b''.join(texto_descomprimido)
 
 def converter_para_string_binaria(codigos, tam_codigo=12):
     # Converte os códigos de compressão para binário e concatena tudo em uma única string binária
@@ -121,4 +118,4 @@ def print_lzw_codes(string_binaria, arquivo_aux, tam_codigo=12):
     
     with open(arquivo_aux, 'w') as file:
         for codigo in codigos:
-            file.write(f"{codigo}\n")  # Write each code as a new line
+            file.write(f"{codigo}\n")
