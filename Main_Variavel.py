@@ -2,17 +2,11 @@ import LZW_Variavel
 import argparse
 import time
 
-def contar_caracteres(arquivo):
-    with open(arquivo, 'r') as file:
-        conteudo = file.read()
-    return len(conteudo)
-
 def calcular_taxa_compressao(tam_original, tam_comprimido):
     tam_comprimido = -(-tam_comprimido // 8)
-    print(f'Tamanho original: {tam_original} bytes')
-    print(f'Tamanho comprimido: {tam_comprimido} bytes')
-    print(f'Taxa de compressão: {100-100*tam_comprimido/tam_original:.2f}%')
-
+    taxa_compressao = round(100-100*tam_comprimido/tam_original, 2)
+    return taxa_compressao
+    
 def main():
     #Analisando os argumentos passados
     parser = argparse.ArgumentParser()
@@ -23,14 +17,14 @@ def main():
     args = parser.parse_args()
 
     #Lendo o arquivo de entrada
-    with open(args.arquivo_entrada, 'r') as file:
+    with open(args.arquivo_entrada, 'rb') as file:
         dados_entrada = file.read()
+    tam_entrada = len(dados_entrada)
 
     #Comprimindo os dados
     tempo_inicial_compressao = time.time()
     codigos_compessao, mudancas_tam = LZW_Variavel.lzw_compressor(dados_entrada, args.tam_max_dic)
     tempo_final_compressao = time.time()
-    print(f'Tempo de compressão: {1000*(tempo_final_compressao - tempo_inicial_compressao):.2f} ms')
     
     #Convertendo os códigos de compressão para binário e concatenando tudo em uma única string binária
     string_bin_comp = LZW_Variavel.converter_para_string_binaria(codigos_compessao, mudancas_tam)
@@ -48,17 +42,22 @@ def main():
     tempo_inicial_descompressao = time.time()
     arquivo_descomprimido = LZW_Variavel.lzw_descompressor(codigos_descompressao, args.tam_max_dic)
     tempo_final_descompressao = time.time()
-    print(f'Tempo de descompressão: {1000*(tempo_final_descompressao - tempo_inicial_descompressao):.2f} ms')
-
+   
     #Salvando o arquivo descomprimido
-    with open(args.arquivo_descomprimido, 'w') as file:
+    with open(args.arquivo_descomprimido, 'wb') as file:
         file.write(arquivo_descomprimido)
 
     #Calculando a taxa de compressão
-    calcular_taxa_compressao(contar_caracteres(args.arquivo_entrada), len(string_bin_comp))
+    taxa_compressao = calcular_taxa_compressao(tam_entrada, len(string_bin_comp))
+    print(f'Taxa de compressão = {taxa_compressao}%')
+
+    print(f'Tempo de compressão = {1000*(tempo_final_compressao - tempo_inicial_compressao):.2f} ms')
+
+    print(f'Tempo de descompresão = {1000*(tempo_final_descompressao - tempo_inicial_descompressao):.2f} ms')
+
 
 if __name__ == "__main__":
     tempo_inicial = time.time()
     main()
     tempo_final = time.time()
-    print(f'Tempo total: {1000*(tempo_final - tempo_inicial):.2f} ms')
+    print(f'Tempo total de execução = {1000*(tempo_final - tempo_inicial):.2f} ms')
