@@ -26,16 +26,18 @@ def process_file(input_file, output_compressed, output_decompressed):
 
 # Process text files
 for text_file in os.listdir(text_dir):
-    text_path = os.path.join(text_dir, text_file)
+    text_path = f"{text_dir}/{text_file}"
     if os.path.isfile(text_path):  # Ensure it's a file, not a directory
-        output_compressed = os.path.join(output_dir, f"{text_file}_compressed")
-        output_decompressed = os.path.join(output_dir, f"{text_file}_decompressed")
-        process_file(text_path, output_compressed, output_decompressed)
+        raw_name = os.path.splitext(os.path.basename(text_file))[0]
+        compressed_file_path = f"{output_dir}/{raw_name}_compressed.txt"
+        decompressed_file_path = f"{output_dir}/{raw_name}_decompressed.txt"
+        process_file(text_path, compressed_file_path, decompressed_file_path)
 
 # Process image files
 for image_file in os.listdir(image_dir):
-    image_path = os.path.join(image_dir, image_file)
+    image_path = f"{image_dir}/{image_file}"
     if os.path.isfile(image_path):  # Ensure it's a file, not a directory
-        output_compressed = os.path.join(output_dir, f"{image_file}_compressed")
-        output_decompressed = os.path.join(output_dir, f"{image_file}_decompressed")
-        process_file(image_path, output_compressed, output_decompressed)
+        raw_name = os.path.splitext(os.path.basename(image_file))[0]
+        compressed_file_path = f"{output_dir}/{raw_name}_compressed.bmp"
+        decompressed_file_path = f"{output_dir}/{raw_name}_decompressed.bmp"
+        process_file(image_path, compressed_file_path, decompressed_file_path)
