@@ -37,6 +37,7 @@ class Tree:
       if matches_local > matches:
         matches = matches_local
         child = child_local
+        break
 
     if matches > 0:
       # case 1: child's node is fully matched, but the current key has more characters
