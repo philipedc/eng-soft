@@ -26,9 +26,9 @@ Um dos principais desafios na implementação dessa estrutura foi adaptá-la par
 
 ## Modo de Uso
 
-### As funções LZW podem ser testadas de forma individual:
+### Cada versão do LZW pode ser testada de forma individual:
 
-**LZW Fixo:** `python3 Main_Fixo.py arquivo arquivo_comprimido arquivo_descomprimido`
+**LZW Fixo:** `python3 Main_Fixo.py arquivo arquivo_comprimido arquivo_descomprimido --tam_dic {tamanho}`
 
 **LZW Variável:** `python3 Main_Variavel.py arquivo arquivo_comprimido arquivo_descomprimido --tam_max_dic {tamanho}`
 
