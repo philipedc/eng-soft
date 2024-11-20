@@ -27,10 +27,11 @@ Um dos principais desafios na implementação dessa estrutura foi adaptá-la par
 ## Modo de Uso
 
 ### Cada versão do LZW pode ser testada de forma individual:
+**Obrsevação:** Cada execução dos comandos abaixo realiza a compressão do arquivo de entrada, a descompressão e a geração dos arquivos comprimidos e descomprimidos. Em relação ao arquivo descomprimido, o seu nome deve ser passado com a respectiva extensão (Teste1.bmp, por exemplo). Além disso, todos os parâmetros, com exceção do último, são obrigatórios.
 
-**LZW Fixo:** `python3 Main_Fixo.py arquivo arquivo_comprimido arquivo_descomprimido --tam_dic {tamanho}`
+**LZW Fixo:** `python3 Main_Fixo.py arquivo_entrada arquivo_comprimido arquivo_descomprimido --tam_dic {tamanho}`
 
-**LZW Variável:** `python3 Main_Variavel.py arquivo arquivo_comprimido arquivo_descomprimido --tam_max_dic {tamanho}`
+**LZW Variável:** `python3 Main_Variavel.py arquivo_entrada arquivo_comprimido arquivo_descomprimido --tam_max_dic {tamanho}`
 
 
 ### LZW em todos os samples ao mesmo tempo:
