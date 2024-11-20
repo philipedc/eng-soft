@@ -47,4 +47,6 @@ A única célula do jupyter **generate_graph.ipynb** utiliza os dados gerados pe
 
 ![alt text](samples/benchmarks/compression_rate.png)
 
+Os valores 1 à 7 representam arquivos de texto e 8 à 10 são arquivos bmp. É possível notar que em ambos os gráficos o valor do eixo y aumenta consideravelmente para os arquivos bmp. Isso implica que que o algoritmo gasta um tempo consideravelmente maior para comprimir e descomprimir bmp's, mas em contrapartida também consegue uma taxa de compressão bem maior
+
 Além disso, testes foram desenvolvidos para garantir que a Trie funcione corretamente após cada modificação. Os testes podem ser executados com o comando: `python3 test_tree.py`.
